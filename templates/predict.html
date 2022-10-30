@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <style>
+        .wrapper {
+            max-width: 500px;
+            width: 100%;
+            background: #007B5E;
+            margin: 20px auto;
+            padding: 30px;
+            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.125);
+        }
+
+        .wrapper .title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: white;
+            text-align: center;
+        }
+
+        .wrapper .form {
+            width: 100%;
+        }
+
+        .wrapper .form .input_field {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .wrapper .form .input_field label {
+            width: 200px;
+            color: black;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .wrapper .form .input_field .input {
+            width: 100%;
+            outline: none;
+            border: 1px solid #d5dbd9;
+            font-size: 15px;
+            padding: 8px 10px;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .wrapper .form .input_field .input:focus {
+            border: 1px solid lime;
+        }
+
+        .wrapper .form .input_field .btn {
+            width: 100%;
+            padding: 8px 10px;
+            font-size: 15px;
+            border: 0;
+            background: whitesmoke;
+            color: #007B5E;
+            cursor: pointer;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .wrapper .form .input_field:last-child {
+            margin-bottom: 0;
+        }
+
+        .wrapper .form .input_field .btn:hover {
+            background: #ffd6;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-image: url("/static/images/card1.PNG");
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        nav {
+            background: #007b5e;
+            height: 80px;
+            width: 100%;
+            opacity: 0.9;
+        }
+
+        label.logo {
+            color: white;
+            font-size: 35px;
+            line-height: 80px;
+            padding: 0 100px;
+            font-weight: bold;
+        }
+
+        nav ul {
+            float: right;
+            margin-right: 20px;
+        }
+
+        nav ul li {
+            display: inline-block;
+            line-height: 80px;
+            margin: 0 15px;
+
+        }
+
+        nav ul li a {
+            color: white;
+            font-size: 17px;
+            text-transform: uppercase;
+            text-decoration: none;
+        }
+
+        nav ul li a:hover {
+            text-decoration: none;
+            color: lime;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar-->
+    <nav>
+        <label class="logo">Agriculture</label>
+        <ul>
+
+            <li><a href="/">Home</a></li>
+            <li><a href="/crop">Crops</a></li>
+            <li><a href="#services">Services</a></li>
+        </ul>
+    </nav>
+    <!-- End of Navbar -->
+
+    <!--Header-->
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Prediction Results</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- <h5>Prediction Input:</h5>
+                    <div>Nitrogen: {{n}} </div>
+                    <div>Phosphorous (ratio): {{p}} </div>
+                    <div>Potassium (ratio): {{k}}</div>
+                    <div>ph level: {{ph}}</div>
+                    <div>Rainfall (in mm): {{rainfall}}</div>
+                    <div>Temperature in Degrees: {{temperature}}</div>
+                    <div>Relative Humidity: {{humidity}}</div> -->
+                    <h5 class="pt-3" style="text-align: center;">Prediction Classification:</h5>
+                    <div id="prediction" style="text-align: center;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="wrapper">
+        <div class="title">
+            Find out the most suitable crop to grow in your farm
+        </div>
+
+        <form action="" id="post-form">
+            {% csrf_token %}
+            <div class="form">
+                <div class="input_field">
+                    <label><b>Nitrogen (ratio)</b></label>
+                    <input type="number" step="0.0000000001" class="input" name="n" id="n" required>
+                </div>
+                <div class="input_field">
+                    <label><b>Phosphorous (ratio)</b></label>
+                    <input type="number" step="0.0000000001" class="input" name="p" id="p" required>
+                </div>
+                <div class="input_field">
+                    <label><b>Potassium (ratio)</b></label>
+                    <input type="number" step="0.0000000001" class="input" name="k" id="k" required>
+                </div>
+                <div class="input_field">
+                    <label><b>ph level</b></label>
+                    <input type="number" step="0.0000000001" class="input" name="ph" id="ph" required>
+                </div>
+                <div class="input_field">
+                    <label><b>Rainfall (in mm)</b></label>
+                    <input type="number" step="0.0000000001" class="input" name="rainfall" id="rainfall" required>
+                </div>
+                <div class="input_field">
+                    <label><b>Temperature in Degrees</b></label>
+                    <input type="number" step="0.0000000001" class="input" name="temp" id="temp" required>
+                </div>
+                <div class="input_field">
+                    <label><b>Relative Humidity</b></label>
+                    <input type="number" step="0.0000000001" class="input" name="humidity" id="humidity" required>
+                </div>
+                <div class="input_field">
+                    <button type="submit" value="Submit" class="btn btn-primary" data-toggle="modal"
+                        data-target="#exampleModal">Submit</button>
+                </div>
+
+        </form>
+
+
+    </div>
+
+    <script>
+        $(document).on('submit', '#post-form', function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '{% url "crop:predict" %}',
+                data: {
+                    n: $('#n').val(),
+                    p: $('#p').val(),
+                    k: $('#k').val(),
+                    ph: $('#ph').val(),
+                    rainfall: $('#rainfall').val(),
+                    temp: $('#temp').val(),
+                    humidity: $('#humidity').val(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    action: 'post'
+                },
+                success: function (json) {
+                    document.forms["post-form"].reset();
+                    document.getElementById("prediction").innerHTML = json['label']
+                    document.getElementById("nitro").innerHTML = json['n']
+                    document.getElementById("phos").innerHTML = json['p']
+                    document.getElementById("pott").innerHTML = json['k']
+                    document.getElementById("phh").innerHTML = json['ph']
+                    document.getElementById("temperature").innerHTML = json['temp']
+                    document.getElementById("humid").innerHTML = json['humidity']
+                    document.getElementById("rain").innerHTML = json['rainfall']
+                },
+                error: function (xhr, errmsg, err) {
+
+                }
+            });
+        })
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
